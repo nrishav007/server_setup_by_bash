@@ -87,6 +87,7 @@ change_branch() {
     read branch_name
     if git show-ref --quiet --heads "$branch_name"; then
         git checkout $branch_name
+        git pull origin $branch_name
         echo "Switched to branch: $branch_name"
     else
         echo "Error: Branch '$branch_name' does not exist."
@@ -101,10 +102,10 @@ push_modified_code() {
     read commit
     echo -en "${YELLOW} Enter Branch name:${NC}"
     read branch
-    echo -en "${YELLOW}Do you have main branch? (${GREEN}y${NC}/${RED}n${NC}):"
+    echo -en "${YELLOW}Are you currently on sub branch? (${GREEN}y${NC}/${RED}n${NC}):"
     read confirm
     if [ "$confirm" == "y" ]; then
-        echo -en "${YELLOW} Enter Branch name:${NC}"
+        echo -en "${YELLOW} Enter Your Main Branch Name:${NC}"
         read main_branch
     fi
     if [ -z "$commit" ] || [ -z "$branch" ]; then
