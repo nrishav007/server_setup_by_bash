@@ -68,17 +68,28 @@ create_branch(){
 }
 change_branch() {
     folder_validation
-    echo -en "${YELLOW}Enter Branch Name: "
+    echo -en "${YELLOW}Enter Branch Name: ${NC}"
     read branch_name
     if git show-ref --quiet --heads "$branch_name"; then
         git checkout $branch_name
-        echo "Switched to branch: $branch_name"
+        echo -en "${YELLOW}Switched to branch:${GREEN} $branch_name ${NC}"
     else
-        echo "Error: Branch '$branch_name' does not exist."
+        echo -en "${RED}Error: Branch '$branch_name' does not exist.${NC}"
         return 1
     fi
 }
-
+create_branch(){
+    folder_validation
+    echo -en "${YELLOW}Enter Branch Name: "
+    read branch_name
+    if git show-ref --quiet --heads "$branch_name"; then
+        echo -en "${RED}Error: Branch '$branch_name' already exist.${NC}"
+    else
+        git branch $branch_name
+        echo -en "${YELLOW}branch:${GREEN} $branch_name ${YELLOW}Created${NC}"
+        return 1
+    fi
+}
 push_modified_code() {
     folder_validation
     echo -en "${GREEN} Enter Commit Message:${NC}"
