@@ -96,10 +96,17 @@ change_branch() {
 
 push_modified_code() {
     folder_validation
+    main_branch=""
     echo -en "${YELLOW} Enter Commit Message:${NC}"
     read commit
     echo -en "${YELLOW} Enter Branch name:${NC}"
     read branch
+    echo -en "${YELLOW}Do you have main branch? (${GREEN}y${NC}/${RED}n${NC}):"
+    read confirm
+    if [ "$confirm" == "y" ]; then
+        echo -en "${YELLOW} Enter Branch name:${NC}"
+        read main_branch
+    fi
     if [ -z "$commit" ] || [ -z "$branch" ]; then
         echo -en "${RED}Error: commit message or branch name are blank.${NC}"
         echo ""
@@ -108,12 +115,15 @@ push_modified_code() {
     if git show-ref --quiet --heads "$branch"; then
         git add .
         git commit -m "$commit"
+        if [$main_branch!=""]; then
+            git pull origin $main_branch
+        fi
         git push origin $branch
     else
         echo "Error: Branch '$branch' does not exist."
         return 1
     fi
-    open_url  
+    open_url
 }
 
 while true; do
