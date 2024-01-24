@@ -30,8 +30,7 @@ display_menu() {
     clear
     echo -e "${GREEN}======${YELLOW} Git Menu${GREEN} ======${NC}"
     echo -e "${YELLOW}Current Folder: ${GREEN} $stored_path${NC}"
-    echo -e "${YELLOW}Current Git URL: ${GREEN} $url${NC}"
-
+    echo -e "${YELLOW}Current Git URL: ${GREEN} $url_path${NC}"
     echo ""
     echo -e "1. ${YELLOW}Update Repository Folder Path${NC}"
     echo -e "2. ${YELLOW}Check Status${NC}"
@@ -134,7 +133,9 @@ push_modified_code() {
         echo "Error: Branch '$branch' does not exist."
         return 1
     fi
-    if [$main_branch!=""]; then
+    if [$main_branch==""]; then
+    return 0
+    else
         open_url
     fi
     
