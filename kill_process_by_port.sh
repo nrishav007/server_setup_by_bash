@@ -10,7 +10,7 @@ if [ -z "$port_number" ]; then
 fi
 
 # Get the PID(s) using the specified port
-pid_list=$(lsof -t -i :"$port_number")
+pid_list=$(lsof -t -i :"$port_number") 
 
 # Check if any process is using the specified port
 if [ -z "$pid_list" ]; then

@@ -70,7 +70,7 @@ push_modified_code() {
     read branch
     if git show-ref --quiet --heads "$branch"; then
         git add .
-        git commit -m $commit
+        git commit -m "$commit"
         git push origin $branch
     else
         echo "Error: Branch '$branch' does not exist."
