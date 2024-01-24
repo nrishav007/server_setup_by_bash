@@ -7,7 +7,22 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
-
+open_url(){
+    url="https://www.github.com"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS
+    open "$url"
+elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+    # Linux
+    xdg-open "$url"
+elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+    # Windows with MSYS or Cygwin
+    start "$url"
+else
+    echo "Unsupported operating system"
+    exit 1
+fi
+}
 display_menu() {
     stored_path=$(cat "$folder_path_file")
     clear
@@ -68,34 +83,28 @@ create_branch(){
 }
 change_branch() {
     folder_validation
-    echo -en "${YELLOW}Enter Branch Name: ${NC}"
-    read branch_name
-    if git show-ref --quiet --heads "$branch_name"; then
-        git checkout $branch_name
-        echo -en "${YELLOW}Switched to branch:${GREEN} $branch_name ${NC}"
-    else
-        echo -en "${RED}Error: Branch '$branch_name' does not exist.${NC}"
-        return 1
-    fi
-}
-create_branch(){
-    folder_validation
     echo -en "${YELLOW}Enter Branch Name: "
     read branch_name
     if git show-ref --quiet --heads "$branch_name"; then
-        echo -en "${RED}Error: Branch '$branch_name' already exist.${NC}"
+        git checkout $branch_name
+        echo "Switched to branch: $branch_name"
     else
-        git branch $branch_name
-        echo -en "${YELLOW}branch:${GREEN} $branch_name ${YELLOW}Created${NC}"
+        echo "Error: Branch '$branch_name' does not exist."
         return 1
     fi
 }
+
 push_modified_code() {
     folder_validation
-    echo -en "${GREEN} Enter Commit Message:${NC}"
+    echo -en "${YELLOW} Enter Commit Message:${NC}"
     read commit
-    echo -en "${GREEN} Enter Branch name:${NC}"
+    echo -en "${YELLOW} Enter Branch name:${NC}"
     read branch
+    if [ -z "$commit" ] || [ -z "$branch" ]; then
+        echo -en "${RED}Error: commit message or branch name are blank.${NC}"
+        echo ""
+        return 0
+    fi
     if git show-ref --quiet --heads "$branch"; then
         git add .
         git commit -m "$commit"
@@ -104,12 +113,7 @@ push_modified_code() {
         echo "Error: Branch '$branch' does not exist."
         return 1
     fi
-    if [ -z "$commit" ] || [ -z "$branch" ]; then
-        echo -en "${RED}Error: commit message or branch name are blank.${NC}"
-        echo ""
-    else
-        echo -e "${YELLOW}Functionality for pushing modified code will be implemented here.${NC}"
-    fi
+    open_url  
 }
 
 while true; do
