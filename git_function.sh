@@ -8,7 +8,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 open_url(){
-url="https://www.github.com"
+git_remote_output=$(git remote -v)
+url=$(echo "$git_remote_output" | awk '{print $2}' | head -n 1)
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS
     open "$url" > /dev/null
