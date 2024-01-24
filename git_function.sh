@@ -8,16 +8,16 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 open_url(){
-    url="https://www.github.com"
-    if [[ "$OSTYPE" == "darwin"* ]]; then
+url="https://www.github.com"
+if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS
-    open "$url"
+    open "$url" > /dev/null
 elif [[ "$OSTYPE" == "linux-gnu" ]]; then
     # Linux
-    xdg-open "$url"
+    xdg-open "$url" > /dev/null
 elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
     # Windows with MSYS or Cygwin
-    start "$url"
+    start "$url" > /dev/null
 else
     echo "Unsupported operating system"
     exit 1
