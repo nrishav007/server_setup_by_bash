@@ -125,7 +125,9 @@ push_modified_code() {
     if git show-ref --quiet --heads "$branch"; then
         git add .
         git commit -m "$commit"
-        if ["$main_branch"!=""]; then
+        if ["$main_branch"==""]; then
+            return 0
+        else
             git pull origin $main_branch
         fi
         git push origin $branch
