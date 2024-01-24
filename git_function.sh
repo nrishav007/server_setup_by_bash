@@ -125,7 +125,7 @@ push_modified_code() {
     if git show-ref --quiet --heads "$branch"; then
         git add .
         git commit -m "$commit"
-        if [$main_branch!=""]; then
+        if ["$main_branch"!=""]; then
             git pull origin $main_branch
         fi
         git push origin $branch
@@ -133,7 +133,7 @@ push_modified_code() {
         echo "Error: Branch '$branch' does not exist."
         return 1
     fi
-    if [ $main_branch == "" ]; then
+    if [ "$main_branch" == "" ]; then
     return 0
     else
         open_url
