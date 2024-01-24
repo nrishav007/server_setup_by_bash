@@ -14,8 +14,9 @@ display_menu() {
     echo -e "1. ${YELLOW}Update Repository Folder Path${NC}"
     echo -e "2. ${YELLOW}Check Status${NC}"
     echo -e "3. ${YELLOW}Change Branch${NC}"
-    echo -e "4. ${YELLOW}Push Modified Code${NC}"
-    echo -e "5. ${RED}Exit${NC}"
+    echo -e "4. ${YELLOW}Create Branch${NC}"
+    echo -e "5. ${YELLOW}Push Modified Code${NC}"
+    echo -e "6. ${RED}Exit${NC}"
 }
 
 update_folder_path() {
@@ -50,18 +51,29 @@ check_status() {
 
 change_branch() {
     folder_validation
+    echo -en "${YELLOW}Enter Branch Name: ${NC}"
+    read branch_name
+    if git show-ref --quiet --heads "$branch_name"; then
+        git checkout $branch_name
+        echo -en "${YELLOW}Switched to branch:${GREEN} $branch_name ${NC}"
+    else
+        echo -en "${RED}Error: Branch '$branch_name' does not exist.${NC}"
+        return 1
+    fi
+}
+create_branch(){
+    folder_validation
     echo -en "${YELLOW}Enter Branch Name: "
     read branch_name
     if git show-ref --quiet --heads "$branch_name"; then
-        git checkout "$branch_name"
-        echo "Switched to branch: $branch_name"
+        echo -en "${RED}Error: Branch '$branch_name' already exist.${NC}"
+        
     else
-        echo "Error: Branch '$branch_name' does not exist."
+        git branch $branch_name
+        echo -en "${YELLOW}branch:${GREEN} $branch_name ${YELLOW}Created${NC}"
         return 1
     fi
-    echo -e "${YELLOW}Functionality for changing the branch will be implemented here.${NC}"
 }
-
 push_modified_code() {
     folder_validation
     echo -en "${GREEN} Enter Commit Message:${NC}"
@@ -87,7 +99,7 @@ push_modified_code() {
 while true; do
     display_menu
     echo ""
-    echo -en "${YELLOW}Enter your choice (1-5): ${NC}"
+    echo -en "${YELLOW}Enter your choice : ${NC}"
     read choice
 
     case $choice in
@@ -101,9 +113,12 @@ while true; do
             change_branch
             ;;
         4)
-            push_modified_code
+            create_branch
             ;;
         5)
+            push_modified_code
+            ;;
+        6)
             echo -e "${RED}Exiting...${NC}"
             exit 0
             ;;
