@@ -133,7 +133,7 @@ push_modified_code() {
         echo "Error: Branch '$branch' does not exist."
         return 1
     fi
-    if [$main_branch==""]; then
+    if [ $main_branch == "" ]; then
     return 0
     else
         open_url
