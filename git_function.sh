@@ -1,6 +1,7 @@
 #!/bin/bash
 
 folder_path_file="stored_path.txt"
+url_path_file="url_path.txt"
 
 # ANSI color codes
 RED='\033[0;31m'
@@ -8,8 +9,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 open_url(){
-    git_remote_output=$(git remote -v)
-    url=$(echo "$git_remote_output" | awk '{print $2}' | head -n 1)
+    url=$(cat "$url_path_file")
     if [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS
         open "$url"
@@ -26,9 +26,12 @@ open_url(){
 }
 display_menu() {
     stored_path=$(cat "$folder_path_file")
+    url_path=$(cat "$url_path_file")
     clear
     echo -e "${GREEN}======${YELLOW} Git Menu${GREEN} ======${NC}"
     echo -e "${YELLOW}Current Folder: ${GREEN} $stored_path${NC}"
+    echo -e "${YELLOW}Current Git URL: ${GREEN} $url${NC}"
+
     echo ""
     echo -e "1. ${YELLOW}Update Repository Folder Path${NC}"
     echo -e "2. ${YELLOW}Check Status${NC}"
@@ -43,6 +46,12 @@ update_folder_path() {
     read folder_path
     if [ -d "$folder_path" ]; then
         echo "$folder_path" > "$folder_path_file"
+        old_path="$(pwd)"
+        cd $folder_path
+        git_remote_output=$(git remote -v)
+        url=$(echo "$git_remote_output" | awk '{print $2}' | head -n 1)
+        cd $old_path
+        echo "$url" > "$url_path_file"
         echo -e "${YELLOW}Folder path ${GREEN}'$folder_path'${YELLOW} stored successfully.${NC}"
     else
         echo -e "${RED}Invalid folder path. The folder does not exist.${NC}"
