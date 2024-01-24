@@ -8,20 +8,21 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 open_url(){
-    url="https://www.github.com"
+    git_remote_output=$(git remote -v)
+    url=$(echo "$git_remote_output" | awk '{print $2}' | head -n 1)
     if [[ "$OSTYPE" == "darwin"* ]]; then
-    # macOS
-    open "$url"
-elif [[ "$OSTYPE" == "linux-gnu" ]]; then
-    # Linux
-    xdg-open "$url"
-elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
-    # Windows with MSYS or Cygwin
-    start "$url"
-else
-    echo "Unsupported operating system"
-    exit 1
-fi
+        # macOS
+        open "$url"
+    elif [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # Linux
+        xdg-open "$url"
+    elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+        # Windows with MSYS or Cygwin
+        start "$url"
+    else
+        echo "Unsupported operating system"
+        exit 1
+    fi
 }
 display_menu() {
     stored_path=$(cat "$folder_path_file")
@@ -124,7 +125,10 @@ push_modified_code() {
         echo "Error: Branch '$branch' does not exist."
         return 1
     fi
-    open_url
+    if [$main_branch!=""]; then
+        open_url
+    fi
+    
 }
 
 while true; do
