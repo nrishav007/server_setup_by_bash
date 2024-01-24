@@ -9,8 +9,11 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 display_menu() {
+    stored_path=$(cat "$folder_path_file")
     clear
-    echo -e "${GREEN}=== Git Menu ===${NC}"
+    echo -e "${GREEN}======${YELLOW} Git Menu${GREEN} ======${NC}"
+    echo -e "${YELLOW}Current Folder: ${GREEN} $stored_path${NC}"
+    echo ""
     echo -e "1. ${YELLOW}Update Repository Folder Path${NC}"
     echo -e "2. ${YELLOW}Check Status${NC}"
     echo -e "3. ${YELLOW}Change Branch${NC}"
@@ -38,9 +41,12 @@ folder_validation(){
             cd "$stored_path" || exit
         else
             echo -e "${RED}No folder path stored in the file.${NC}"
+            update_folder_path
+
         fi
     else
         echo -e "${RED}No folder path stored. Please store a folder path first.${NC}"
+        update_folder_path
     fi
 }
 
@@ -48,7 +54,18 @@ check_status() {
     folder_validation
     git status
 }
-
+create_branch(){
+    folder_validation
+    echo -en "${YELLOW}Enter Branch Name: "
+    read branch_name
+    if git show-ref --quiet --heads "$branch_name"; then
+        echo "${RED}Error: Branch ${GREEN}'$branch_name'${RED} already exist.${NC}"
+    else
+        git branch $branch_name
+        echo -en "${YELLOW} branch changed successfully to ${GREEN}$branch_name${NC}"
+        return 1
+    fi
+}
 change_branch() {
     folder_validation
     echo -en "${YELLOW}Enter Branch Name: ${NC}"
@@ -67,7 +84,6 @@ create_branch(){
     read branch_name
     if git show-ref --quiet --heads "$branch_name"; then
         echo -en "${RED}Error: Branch '$branch_name' already exist.${NC}"
-        
     else
         git branch $branch_name
         echo -en "${YELLOW}branch:${GREEN} $branch_name ${YELLOW}Created${NC}"
@@ -99,7 +115,7 @@ push_modified_code() {
 while true; do
     display_menu
     echo ""
-    echo -en "${YELLOW}Enter your choice : ${NC}"
+    echo -en "${YELLOW}Enter your choice: ${NC}"
     read choice
 
     case $choice in
@@ -123,7 +139,7 @@ while true; do
             exit 0
             ;;
         *)
-            echo -e "${RED}Invalid choice. Please enter a number between 1 and 5.${NC}"
+            echo -e "${RED}Invalid choice.${NC}"
             ;;
     esac
 
